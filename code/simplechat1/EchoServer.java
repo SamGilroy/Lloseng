@@ -5,6 +5,8 @@
 import java.io.*;
 import ocsf.server.*;
 
+import common.ChatIF;
+
 /**
  * This class overrides some of the methods in the abstract 
  * superclass in order to give more functionality to the server.
@@ -56,10 +58,12 @@ public class EchoServer extends AbstractServer
    * This method overrides the one in the superclass.  Called
    * when the server starts listening for connections.
    */
+  boolean serverClosed;
   protected void serverStarted()
   {
     System.out.println
       ("Server listening for connections on port " + getPort());
+      serverClosed = false;
   }
   
   /**
@@ -70,18 +74,76 @@ public class EchoServer extends AbstractServer
   {
     System.out.println
       ("Server has stopped listening for connections.");
+      serverClosed = true;
   }
   
   //Class methods ***************************************************
   protected void clientConnected(ConnectionToClient client) {
-	  System.out.println("Client: "+ client + " has connected.");
-	  client.setInfo("isFirstMessage", true);
+	  System.out.println("A client has connected.");
   }
   synchronized protected void clientDisconnected(ConnectionToClient client) {
-	  System.out.println("Client has disconnected.");
+	  System.out.println("A client has disconnected.");
   }
   synchronized protected void clientException(ConnectionToClient client, Throwable exception) {
 	  clientDisconnected(client);
+  }
+
+  ChatIF serverUI;
+  
+  public EchoServer(int port,ChatIF serverUI) 
+  {
+    super(port);
+    this.serverUI = serverUI;
+  }
+
+   public void handleMessageFromServerUI(String message){
+	  if(message.charAt(0) == '#'){
+			try{
+				handleServerCommands(message);
+			}
+			catch(IOException e){
+				System.out.println(e);
+			}
+		}
+	  else{
+		  serverUI.display("SERVER MSG>" + message);
+		  sendToAllClients("SERVER MSG>" + message);
+	  }
+  }
+
+  private void handleServerCommands(String message) throws IOException{
+	  //create string array to handle setHost and setPort
+	  String[] splitMessage = message.split(" ", 2);
+	  switch (splitMessage[0]){ 
+	  	  case "#quit" : System.exit(0);
+	  	  	break;	
+		  case "#stop" : stopListening();
+		  	break;
+		  case "#close": close();
+		  	break;
+		  case "#setport":
+		  	if(serverClosed) {
+		  		setPort(Integer.parseInt(splitMessage[1].replace("<", "").replace(">", "")));
+		  	}
+			else{
+				throw new IOException("Close server before setting port");
+			}
+		  	break;
+		  case "#start":
+			if(!isListening()) {
+				listen();
+		  	}
+			else{
+				throw new IOException("The server is currently listening");
+			}
+			break;
+		  case "#getport":
+			  serverUI.display("Port: "+ getPort());
+			  break;
+		  default:
+			  throw new IOException("Invalid Command"); 
+		  	
+	  }
   }
   /**
    * This method is responsible for the creation of 
