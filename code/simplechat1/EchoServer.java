@@ -73,7 +73,16 @@ public class EchoServer extends AbstractServer
   }
   
   //Class methods ***************************************************
-  
+  protected void clientConnected(ConnectionToClient client) {
+	  System.out.println("Client: "+ client + " has connected.");
+	  client.setInfo("isFirstMessage", true);
+  }
+  synchronized protected void clientDisconnected(ConnectionToClient client) {
+	  System.out.println("Client has disconnected.");
+  }
+  synchronized protected void clientException(ConnectionToClient client, Throwable exception) {
+	  clientDisconnected(client);
+  }
   /**
    * This method is responsible for the creation of 
    * the server instance (there is no UI in this phase).
