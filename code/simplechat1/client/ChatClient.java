@@ -66,18 +66,71 @@ public class ChatClient extends AbstractClient
    */
   public void handleMessageFromClientUI(String message)
   {
-    try
-    {
-      sendToServer(message);
+    if(message.charAt(0) == '#'){
+    try{
+    handleClientCommands(message);
     }
-    catch(IOException e)
-    {
-      clientUI.display
-        ("Could not send message to server.  Terminating client.");
-      quit();
+    catch(IOException e){
+      System.out.println(e);
+    }
+  } 
+  else{
+      try
+      {
+        sendToServer(message);
+      }
+      catch(IOException e)
+      {
+        clientUI.display
+          ("Could not send message to server.  Terminating client.");
+        quit();
+      }
     }
   }
   
+  private void handleClientCommands(String message) throws IOException{
+    //create string array to handle setHost and setPort
+    String[] splitMessage = message.split(" ", 2);
+    switch (splitMessage[0]){ 
+      case "#quit": quit();
+        break;
+      case "#logoff" : closeConnection();
+        break;
+        //case to setHost, checks if connected, then removes < and > before setting.
+      case "#sethost" :
+      if(!isConnected()) {
+        setHost(splitMessage[1].replace("<", "").replace(">", ""));
+        }
+      else{
+        throw new IOException("Logoff before setting host");
+      }
+        break;
+      case "#setport":
+        if(!isConnected()) {
+          setPort(Integer.parseInt(splitMessage[1].replace("<", "").replace(">", "")));
+        }
+      else{
+        throw new IOException("Logoff before setting port");
+      }
+        break;
+      case "#login":
+      if(!isConnected()) {
+        openConnection();
+        }
+      else{
+        throw new IOException("Logoff before attempting to login");
+      }
+      break;
+      case "#gethost":
+        clientUI.display("Host: "+ getHost());
+      break;
+      case "#getport":
+        clientUI.display("Port: "+ getPort());
+        break;
+      default:
+        throw new IOException("Invalid Command");    
+    }     
+  }
   /**
    * This method terminates the client.
    */
