@@ -1,0 +1,64 @@
+Samuel Gilroy
+300060356
+sgilr061@uottawa.ca
+
+Test Cases:
+2001: Server Reports that it is listening for connections on port 5555
+2002:Reports that it cannot connect without a login (No Login ID provided, exiting client)
+2003:Reports error that it cannot set up connection and terminates client. (Error: Can't setup connection! Terminating client.)
+2004: Server displays: 
+A client has connected.
+Message received: #login me from 127.0.0.1 (127.0.0.1)
+Client displays:
+#login me
+2005:
+client displays: 
+hi
+> hi
+server displays:
+Message received: hi from 127.0.0.1 (127.0.0.1)
+2006:
+All client messages are echoed as in Testcase 2005
+All messages from the server console are echoed on the server console
+and to all clients, but are preceeded by "SERVER MESSAGE> ".
+2007:
+The server quits as expected
+2008:
+server displays:
+Server has stopped listening for connections.
+A client has disconnected.
+client displays:
+the server has shutdown. closing client.
+2009:
+server displays:
+Server listening for connections on port 5555.
+client reconnects normally
+2010:
+client terminates as per requirements.
+2011:
+client disconnects
+2012:
+host sets newhost and port which can be called through gethost and getport
+2013:
+server displays:
+Server listening for connections on port 1234.
+2014:
+connsection occurs normally
+2015:works accordingly to the testcase
+2016:works according to testcase
+2017:works according to testcase
+2018: same results as before
+2019: same results as before
+
+1001:
+The server reports that it is listening for clients by displaying the
+following message:  Server listening for clients on port 5555
+
+1002:
+The client reports it cannot connect by displaying message:
+Error: Can't setup connection!  Terminating client.
+
+1005:
+Upon receiving input, the client displays
+the message "> Could not send message to server. Terminating client."
+
