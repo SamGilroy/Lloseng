@@ -62,3 +62,15 @@ Error: Can't setup connection!  Terminating client.
 Upon receiving input, the client displays
 the message "> Could not send message to server. Terminating client."
 
+1006:
+Server displays that first client has disconnected and then accepts 2nd client.
+
+1007: works according to  test case
+
+1011: works according to  test case
+
+1012: works according to  test case
+
+
+
+
